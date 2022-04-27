@@ -1,9 +1,11 @@
 <template>
-  <div class="entry-title d-flex justify-content-betwen p-2">
+    
+  <div  v-if="entry"
+        class="entry-title d-flex justify-content-betwen p-2">
         <div >
-            <span class="text-success fs-3 fw-bold">25</span>
-            <span class="mx-1 fs-3">Abril</span>
-            <span class="mx-2 fs-4 fw-light">2022, lunes</span>
+            <span class="text-success fs-3 fw-bold">{{day}}</span>
+            <span class="mx-1 fs-3">{{month}}</span>
+            <span class="mx-2 fs-4 fw-light">{{yearDay}}</span>
         </div>
         <div>
             <button class="btn btn-danger mx-2">
@@ -18,10 +20,14 @@
     </div>
 
     <hr>
-    <div class="d-flex flex-colum px-3 h-75">
-        <textarea placeholder="¿Que sucedio hoy?"></textarea>
+    <div 
+        v-if="entry"
+        class="d-flex flex-colum px-3 h-75">
+        <textarea
+            v-model="entry.text"
+            placeholder="¿Que sucedio hoy?"></textarea>
 
-    </div>
+    </div> 
 
     <FabVue 
         icon="fa-save"
@@ -34,10 +40,60 @@
 
 <script>
 import { defineAsyncComponent } from "vue";
+import { mapGetters } from "vuex";
+
+import getDayMonthYear from "../helpers/getDayMonthYear";
 
 export default {
+    props: {
+        id: {
+            type: String,
+            required: true,
+        }
+    },
     components: {
         FabVue: defineAsyncComponent(() => import('../components/FabVue.vue'))
+    },
+
+    data() {
+        return {
+            entry: null
+        }
+    },
+
+    methods: {
+        loadEntry() {
+            const entry = this.getEntriesById(this.id)
+            if(!entry) return this.$router.push({name: 'no-entry'})
+
+            this.entry = entry
+        }
+    },
+
+    computed: {
+        ...mapGetters('journal', ['getEntriesById']),
+        day(){
+            const {day} = getDayMonthYear(this.entry.date)
+            return day
+        },
+        month(){
+            const {month} = getDayMonthYear(this.entry.date)
+            return month
+        },
+        yearDay(){
+            const {year} = getDayMonthYear(this.entry.date)
+            return year
+        }
+    },
+
+    created() {
+        this.loadEntry()
+    },
+
+    watch: {
+        id() {
+            this.loadEntry()
+        }
     }
 }
 </script>
@@ -47,6 +103,7 @@ textarea{
     font-size: 20px;
     border: none;
     height: 100%;
+    width: 100%;
 
     &:focus {
         outline: none;
