@@ -3,10 +3,14 @@
     // return state
 // }
 
-export const getEntriesByTerm = (state) =>{
-    return state
+export const getEntriesByTerm = (state) => (term = '') =>{
+
+    // return state.entries
+    if(term.length === 0) return state.entries
+    
+    return state.entries.filter(entry => entry.text.toLowerCase().includes(term.toLocaleLowerCase()))
 }
 
-export const getEntriesById = (state) =>{
-    return state
+export const getEntriesById = (/*state*/) =>{
+    
 }
