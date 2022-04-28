@@ -2,16 +2,21 @@
   <div class="d-flex justify-content-center">
       <h1 class="align-self-center">No hay nada seleccionado</h1>
   </div>
-  <fab-vue />
+  <fab-vue @on:click="createNewEntry" />
 </template>
 
 <script>
 import { defineAsyncComponent } from "vue";
-import FabVue from '../components/FabVue.vue';
 
 export default {
-  components: { FabVue },
+  components: {
     FabVue: defineAsyncComponent(() => import('../components/FabVue.vue'))
+  },
+  methods: {
+    createNewEntry() {
+      this.$router.push({name: 'entry', params: {id: 'new'}})
+    }
+  }
 }
 </script>
 
