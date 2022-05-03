@@ -44,8 +44,8 @@
             class="img-thumbnail"> -->
 
         <img 
-            v-if="localImage"
-            :src="localImage" 
+            v-if="entry.picture && !localImage"
+            :src="entry.picture" 
             alt="entry one piece picture"
             class="img-thumbnail">
 
@@ -65,6 +65,7 @@ import { mapGetters, mapActions } from "vuex";
 import Swal from "sweetalert2";
 
 import getDayMonthYear from "../helpers/getDayMonthYear";
+import uploadImage from "../helpers/uploadImage";
 
 export default {
     props: {
@@ -128,6 +129,9 @@ export default {
             })
             Swal.showLoading()
 
+            const image = await uploadImage(this.file)
+
+            this.entry.picture = image
             if ( this.entry.id  ) {
                 // Actualizar
                 await this.updateEntry( this.entry )
@@ -136,7 +140,7 @@ export default {
                 const id = await this.createEntry( this.entry )
                 this.$router.push({ name: 'entry', params: { id } })
             }
-
+            this.file = null
             Swal.fire('Guardado', 'Entrada registrada con exito', 'success')
         },
             
