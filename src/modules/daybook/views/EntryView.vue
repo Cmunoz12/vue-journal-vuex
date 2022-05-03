@@ -8,16 +8,25 @@
                 <span class="mx-2 fs-4 fw-light">{{yearDay}}</span>
             </div>
             <div>
+                <input  type="file"
+                        @change="onSelectedImage"
+                        ref="imageSelector"
+                        v-show="false"
+                        accept="image/png, image/jpeg">
+
                 <button v-if="entry.id"
                         class="btn btn-danger mx-2"
                         @click="onDeleteEntry">
                     borrar
                     <i class="fa fa-trash-alt"></i>
                 </button>
-                <button class="btn btn-primary">
+
+                <button class="btn btn-primary"
+                @click="onSelectImage">
                     subir foto
                     <i class="fa fa-upload"></i>
                 </button>
+
             </div>
         </div>
         
@@ -30,9 +39,16 @@
             </textarea>
         </div>  
         
-        <img src="https://i0.wp.com/codigoespagueti.com/wp-content/uploads/2022/04/One-Piece-libera-un-historico-y-viral-episodio-1015.jpg?fit=1280%2C720&quality=80&ssl=1" 
+        <!-- <img src="https://i0.wp.com/codigoespagueti.com/wp-content/uploads/2022/04/One-Piece-libera-un-historico-y-viral-episodio-1015.jpg?fit=1280%2C720&quality=80&ssl=1" 
+            alt="entry one piece picture"
+            class="img-thumbnail"> -->
+
+        <img 
+            v-if="localImage"
+            :src="localImage" 
             alt="entry one piece picture"
             class="img-thumbnail">
+
     </template>
 
     <FabVue 
@@ -63,7 +79,9 @@ export default {
 
     data() {
         return {
-            entry: null
+            entry: null,
+            localImage: null,
+            file: null,
         }
     },
         
@@ -143,6 +161,26 @@ export default {
 
                 Swal.fire('Eliminado', '' , 'success')
             }
+        },
+
+        onSelectedImage(event){
+            const file = event.target.files[0];
+
+            if(!file){
+                this.localImage = null
+                this.file = null
+                return
+            }
+
+            this.file = file
+            const fr = new FileReader()
+
+            fr.onload = () => this.localImage = fr.result
+            fr.readAsDataURL(file)
+        },
+
+        onSelectImage(){
+            this.$refs.imageSelector.click()
         }
     },
 
